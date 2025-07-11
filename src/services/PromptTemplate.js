@@ -14,6 +14,7 @@ Generate **concise, professional documentation in Markdown format** for this cod
 - Custom hooks or logic
 - Key React features like useState, useEffect, etc.
 - Java/Spring Boot endpoints or classes (if applicable)
+- Python functions or classes (if applicable)
 
 ❌ Do NOT explain:
 - Styling or config files
