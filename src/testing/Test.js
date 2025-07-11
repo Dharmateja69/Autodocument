@@ -9,3 +9,6 @@ const sum = () => {
 const multiply = () => {
     return a * b;
 }
+const subtract = () => {
+    return a - b;
+}
