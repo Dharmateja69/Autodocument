@@ -72,7 +72,8 @@ router.post('/webhook', async (req, res) => {
             }
         }
 
-        console.log('🎉 All files processed successfully');
+        console.log('🎉 All files processed successfully without any delay');
+
         res.status(200).send('📄 Documentation generated successfully');
     } catch (err) {
         console.error('💥 Webhook processing failed:', err.message);

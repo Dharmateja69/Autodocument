@@ -7,7 +7,7 @@ import { parse } from 'path';
  */
 // docWriter.js
 export function toMarkdown(markdownContent) {
-    console.log("🧾 [Debug] Raw content:\n", markdownContent);
+    console.log("🧾Raw content:\n", markdownContent);
     return markdownContent; // Don't encode here!
 }
 

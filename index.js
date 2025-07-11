@@ -19,5 +19,5 @@ app.get('/', (_req, res) => {
 // Example (Node.js/Express)
 app.post('/webhook', WebhookRouter);
 app.listen(port, () => {
-    console.log(`🛠️ Auto-Doc Backend is running on port ${port}`);
+    console.log(` Auto-Doc Backend is running on port ${port}`);
 })
