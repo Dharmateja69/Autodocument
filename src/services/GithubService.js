@@ -14,8 +14,8 @@ export async function getFileContent(owner, repo, filePath) {
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
     try {
-        console.log(`🔍 Sending GET request to: ${url}`);
-        console.log("🔑 GitHub PAT starts with:", GITHUB_PAT?.slice(0, 50)); // Just for debug, do not log full token
+        console.log(`🔍 Sending GET request to github : ${url}`);
+        console.log("🔑 GitHub PAT starts with:", GITHUB_PAT?.slice(0, 60)); // Just for debug, do not log full token
 
         const res = await axios.get(url, {
             headers: {
