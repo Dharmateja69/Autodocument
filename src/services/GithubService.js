@@ -1,6 +1,7 @@
 // services/githubService.js
 
 import axios from 'axios';
+import { execSync } from 'child_process';
 import dotenv from 'dotenv';
 dotenv.config()
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
@@ -40,6 +41,7 @@ export async function getFileContent(owner, repo, filePath) {
 /**
  * Push generated doc to GitHub repo at /docs/<commit-id>/<filename>.md
  */
+
 export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, content }) {
     const fileName = filePath.split('/').pop().replace(/\.[^/.]+$/, '.md');
     const docPath = `docs/${commitId}/${fileName}`;
@@ -48,7 +50,7 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
     console.log(`\n📤 [GitHub Service] Pushing docs to: ${repoOwner}/${repoName}/${docPath}`);
 
     try {
-        // Convert content to Base64 if not already encoded
+        // 🔐 Encode content for GitHub API
         const encodedContent = Buffer.from(content).toString('base64');
         console.log(`📝 Prepared content (${encodedContent.length} chars encoded)`);
 
@@ -58,21 +60,29 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
         };
 
         console.log(`🚀 Sending PUT request to: ${url}`);
-        const res = await axios.put(
-            url,
-            payload,
-            {
-                headers: {
-                    Authorization: `token ${GITHUB_PAT}`,
-
-                    Accept: 'application/vnd.github.v3+json',
-                },
-            }
-        );
+        const res = await axios.put(url, payload, {
+            headers: {
+                Authorization: `token ${GITHUB_PAT}`,
+                Accept: 'application/vnd.github.v3+json',
+            },
+        });
 
         console.log(`✅ Docs pushed successfully! Commit SHA: ${res.data.commit.sha}`);
         console.log(`🔗 View at: https://github.com/${repoOwner}/${repoName}/blob/main/${docPath}`);
+
+        // ✅ Auto-sync local repo with latest state from remote (main branch)
+        try {
+            console.log(`🔄 Syncing local branch with remote...`);
+            execSync('git pull --rebase origin main && git push origin main', {
+                stdio: 'inherit',
+            });
+            console.log(`✅ Local repo synced successfully.`);
+        } catch (syncError) {
+            console.error(`❌ Git sync failed: ${syncError.message}`);
+        }
+
         return res.data;
+
     } catch (error) {
         console.error(`❌ Failed to push docs for ${fileName}:`, {
             status: error.response?.status,
