@@ -56,6 +56,8 @@ router.post('/webhook', async (req, res) => {
 
                 // 📄 Step 3: Write doc and push it to /docs/{commitId}/
                 console.log('⬆️ Pushing documentation to GitHub...');
+                console.log("✅ [Debug] AI-generated content (should be decoded text):\n", docMarkdown);
+
                 await pushDocToRepo({
                     repoOwner,
                     repoName,
