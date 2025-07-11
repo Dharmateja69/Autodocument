@@ -19,7 +19,8 @@ export async function getFileContent(owner, repo, filePath) {
 
         const res = await axios.get(url, {
             headers: {
-                Authorization: `token ${GITHUB_PAT ? '***masked***' : 'MISSING_PAT'}`,
+                Authorization: `token ${GITHUB_PAT}`,
+
                 Accept: 'application/vnd.github.v3.raw',
             },
         });
@@ -62,7 +63,8 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
             payload,
             {
                 headers: {
-                    Authorization: `token ${GITHUB_PAT ? '***masked***' : 'MISSING_PAT'}`,
+                    Authorization: `token ${GITHUB_PAT}`,
+
                     Accept: 'application/vnd.github.v3+json',
                 },
             }

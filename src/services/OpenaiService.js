@@ -1,48 +1,51 @@
 // services/openaiService.js
 
+import axios from 'axios'; // ✅ Add this
 import dotenv from 'dotenv';
-import { OpenAI } from 'openai';
 import getPrompt from './PromptTemplate.js';
+
 dotenv.config();
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
-});
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY; // ✅ Must be defined in your .env
 
 /**
- * Sends code to OpenAI and gets Markdown doc
- * @param {Object} params
- * @param {string} params.code - The code to document
- * @param {string} params.filename - Name of the file (e.g., App.jsx)
- * @param {string} params.commitId - The Git commit hash
- * @returns {string} Markdown documentation
+ * Sends code to OpenRouter and gets Markdown doc
  */
 export async function generateDoc({ code, filename, commitId }) {
     const prompt = getPrompt(code, filename, commitId);
+    const url = 'https://openrouter.ai/api/v1/chat/completions';
 
     try {
-        const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini', // or 'gpt-3.5-turbo' if cost/performance needed
-            messages: [
-                {
-                    role: 'system',
-                    content: 'You are a professional technical writer assistant.'
-                },
-                {
-                    role: 'user',
-                    content: prompt
+        const response = await axios.post(
+            url,
+            {
+                model: "mistralai/mistral-7b-instruct", // Or any other supported model
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'You are a helpful AI that writes technical documentation.'
+                    },
+                    {
+                        role: 'user',
+                        content: prompt
+                    }
+                ],
+                temperature: 0.4,
+                max_tokens: 2048,
+            },
+            {
+                headers: {
+                    'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+                    'HTTP-Referer': 'http://localhost', // Required by OpenRouter
+                    'Content-Type': 'application/json'
                 }
-            ],
-            temperature: 0.4,
-            max_tokens: 800
-        });
+            }
+        );
 
-        const markdown = response.choices[0].message.content.trim();
+        const markdown = response.data.choices[0].message.content.trim();
         return markdown;
     } catch (err) {
-        console.error('❌ OpenAI Error:', err.message);
-        throw new Error('Failed to generate documentation.');
+        console.error('❌ OpenRouter Error:', err.message);
+        throw new Error('Failed to generate documentation from OpenRouter.');
     }
 }
-
-
