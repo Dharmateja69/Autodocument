@@ -1,12 +1,11 @@
 // services/githubService.js
 
 import axios from 'axios';
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 import dotenv from 'dotenv';
 dotenv.config()
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
 const GITHUB_PAT = process.env.GITHUB_PAT;
-
 /**
  * Get raw file content from GitHub
  */
@@ -41,6 +40,19 @@ export async function getFileContent(owner, repo, filePath) {
 /**
  * Push generated doc to GitHub repo at /docs/<commit-id>/<filename>.md
  */
+function syncLocalRepo() {
+    return new Promise((resolve, reject) => {
+        exec('git pull origin main && git push origin main', (err, stdout, stderr) => {
+            if (err) {
+                reject(new Error(`Git sync failed: ${stderr || err.message}`));
+            } else {
+                console.log(stdout);
+                resolve();
+            }
+        });
+    });
+}
+
 
 export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, content }) {
     const fileName = filePath.split('/').pop().replace(/\.[^/.]+$/, '.md');
@@ -50,13 +62,35 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
     console.log(`\n📤 [GitHub Service] Pushing docs to: ${repoOwner}/${repoName}/${docPath}`);
 
     try {
-        // 🔐 Encode content for GitHub API
-        const encodedContent = Buffer.from(content).toString('base64');
+        // 🔐 Encode Markdown content to base64 (required by GitHub)
+        const encodedContent = Buffer.from(content, 'utf-8').toString('base64');
         console.log(`📝 Prepared content (${encodedContent.length} chars encoded)`);
+
+        let sha = null;
+
+        // 🔍 Check if the file already exists to get its current SHA
+        try {
+            const checkRes = await axios.get(url, {
+                headers: {
+                    Authorization: `token ${GITHUB_PAT}`,
+                    Accept: 'application/vnd.github.v3+json',
+                },
+            });
+
+            sha = checkRes.data.sha;
+            console.log(`🧩 Existing file SHA found: ${sha}`);
+        } catch (err) {
+            if (err.response && err.response.status === 404) {
+                console.log(`📁 File does not exist yet. Will create new.`);
+            } else {
+                throw err; // throw other errors
+            }
+        }
 
         const payload = {
             message: `📄 AI Doc for ${fileName} (commit ${commitId})`,
             content: encodedContent,
+            ...(sha && { sha }), // include SHA only if it's found
         };
 
         console.log(`🚀 Sending PUT request to: ${url}`);
@@ -73,9 +107,7 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
         // ✅ Auto-sync local repo with latest state from remote (main branch)
         try {
             console.log(`🔄 Syncing local branch with remote...`);
-            execSync('git pull --rebase origin main && git push origin main', {
-                stdio: 'inherit',
-            });
+            await syncLocalRepo();
             console.log(`✅ Local repo synced successfully.`);
         } catch (syncError) {
             console.error(`❌ Git sync failed: ${syncError.message}`);
@@ -93,4 +125,5 @@ export async function pushDocToRepo({ repoOwner, repoName, commitId, filePath, c
         throw new Error(`GitHub push failed: ${error.message}`);
     }
 }
+
 
