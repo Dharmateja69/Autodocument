@@ -6,3 +6,6 @@ console.log(`Sum of ${a} and ${b} is ${c}`);
 const sum = () => {
     return a + b;
 }
+const multiply = () => {
+    return a * b;
+}
