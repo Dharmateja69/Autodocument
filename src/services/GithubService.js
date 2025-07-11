@@ -1,8 +1,8 @@
 // services/githubService.js
 
+import axios from 'axios';
 import dotenv from 'dotenv';
 dotenv.config()
-
 const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
 const GITHUB_PAT = process.env.GITHUB_PAT;
 
@@ -10,11 +10,13 @@ const GITHUB_PAT = process.env.GITHUB_PAT;
  * Get raw file content from GitHub
  */
 export async function getFileContent(owner, repo, filePath) {
-    console.log(`\n📥 [GitHub Service] Fetching file: ${owner}/${repo}/${filePath}`);
+    console.log(`\n📥 [GitHub Service] Fetching file: ${GITHUB_USERNAME}/${repo}/${filePath}`);
     const url = `https://api.github.com/repos/${owner}/${repo}/contents/${filePath}`;
 
     try {
         console.log(`🔍 Sending GET request to: ${url}`);
+        console.log("🔑 GitHub PAT starts with:", GITHUB_PAT?.slice(0, 50)); // Just for debug, do not log full token
+
         const res = await axios.get(url, {
             headers: {
                 Authorization: `token ${GITHUB_PAT ? '***masked***' : 'MISSING_PAT'}`,
