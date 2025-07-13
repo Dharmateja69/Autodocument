@@ -7,6 +7,7 @@ const GITHUB_USERNAME = process.env.GITHUB_USERNAME;
 const GITHUB_PAT = process.env.GITHUB_PAT;
 const DEFAULT_BRANCH = 'main';
 const DOC_BRANCH = 'Document';
+
 /**
  * Get raw file content from GitHub
  */
