@@ -41,13 +41,3 @@
 //     // Call the sorting function
 //     insertionSort(a, n);
 //     return 0;
-// }
-
-// //Step-by-step Iterations (How the array changes):
-// //
-// //Pass	i	Comparisons/Swaps                	Resulting Array
-// //1	0	-	                                [5, 3, 4, 1, 2]
-// //2	1	5 > 3  swap        	                [3, 5, 4, 1, 2]
-// //3	2	5 > 4  swap	                        [3, 4, 5, 1, 2]
-// //4	3	5 > 1  swap  4 > 1  swap  3 > 1  swap	[1, 3, 4, 5, 2]
-// //5	4	5 > 2  swap  4 > 2  swap  3 > 2  swap	[1, 2, 3, 4, 5]
