@@ -1,3 +1,14 @@
+// routes/webhook.js
+
+import { Router } from 'express';
+import { toMarkdown } from '../services/DocWriter.js';
+import { getFileContent, pushDocToRepo } from '../services/GithubService.js';
+import { generateDoc } from '../services/OpenaiService.js';
+import verifyWebhook from '../utils/VerifyWebhook.js';
+const router = Router();
+
+const ALLOWED_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.java', '.py', '.go', '.cpp'];
+
 router.post('/webhook', async (req, res) => {
     console.log('🔔 Webhook received - Starting verification');
 
@@ -67,3 +78,6 @@ router.post('/webhook', async (req, res) => {
         res.status(500).send('Webhook processing failed');
     }
 });
+
+
+export default router;
