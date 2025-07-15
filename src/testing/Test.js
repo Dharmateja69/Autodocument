@@ -1,40 +1,53 @@
-// test.js - Basic test file for Node.js
-const assert = require('assert');
-const { branchExists, createBranchFromMain, pushDocToRepo } = require('./src/services/GithubService');
+// #include<stdio.h>
 
-// Mock configuration
-const TEST_CONFIG = {
-    repoOwner: 'your-username',
-    repoName: 'test-repo',
-    commitId: 'test123',
-    filePath: 'test/file.js',
-    content: '# Test Documentation\n\nThis is a test markdown content.'
-};
+// // Function to perform insertion sort
+// void insertionSort(int ar[], int n)
+// {
+//     // Outer loop goes from 0 to n-2 (we'll be inserting elements from index 1 onwards)
+//     for (int i = 0; i < n - 1; i++)
+//     {
+//         int j = i;
+//    // Keep swapping the current element with the previous one until it's in the right place
+//         while (j > 0 && ar[j - 1] > ar[j])
+//         {
+//             // Swap arr[j] and arr[j - 1]
+//             int t = ar[j - 1];
+//             ar[j - 1] = ar[j];
+//             ar[j] = t;
 
-// Test cases
-(async () => {
-    console.log('🚀 Starting GitHub Service Tests...');
+//             j--; // move left
+//         }
+//     }
+//     // Print the sorted array
+//     printf("After the sorting:\n");
+//     for (int i = 0; i < n; i++)
+//     {
+//         printf("%d ", ar[i]);
+//     }
+// }
 
-    try {
-        // Test 1: Branch existence check
-        console.log('\n🔍 Testing branchExists()');
-        const exists = await branchExists(TEST_CONFIG.repoOwner, TEST_CONFIG.repoName, 'main');
-        assert.strictEqual(typeof exists, 'boolean', 'branchExists should return boolean');
-        console.log('✅ branchExists() test passed');
+// int main()
+// {
+//     int n;
 
-        // Test 2: Create branch (run only if needed)
-        console.log('\n🌿 Testing createBranchFromMain()');
-        await createBranchFromMain(TEST_CONFIG.repoOwner, TEST_CONFIG.repoName);
-        console.log('✅ createBranchFromMain() executed (verify in GitHub)');
+//     // Take the number of elements
+//     scanf("%d", &n);
+//      int a[n];
+//       // Take input elements
+//     for (int i = 0; i < n; i++)
+//     {
+//         scanf("%d", &a[i]);
+//     }
+//     // Call the sorting function
+//     insertionSort(a, n);
+//     return 0;
+// }
 
-        // Test 3: Push documentation
-        console.log('\n📤 Testing pushDocToRepo()');
-        await pushDocToRepo(TEST_CONFIG);
-        console.log('✅ pushDocToRepo() executed (verify in GitHub)');
-
-        console.log('\n🎉 All tests completed successfully!');
-    } catch (error) {
-        console.error('❌ Test failed:', error.message);
-        process.exit(1);
-    }
-})();
+// //Step-by-step Iterations (How the array changes):
+// //
+// //Pass	i	Comparisons/Swaps                	Resulting Array
+// //1	0	-	                                [5, 3, 4, 1, 2]
+// //2	1	5 > 3  swap        	                [3, 5, 4, 1, 2]
+// //3	2	5 > 4  swap	                        [3, 4, 5, 1, 2]
+// //4	3	5 > 1  swap  4 > 1  swap  3 > 1  swap	[1, 3, 4, 5, 2]
+// //5	4	5 > 2  swap  4 > 2  swap  3 > 2  swap	[1, 2, 3, 4, 5]
